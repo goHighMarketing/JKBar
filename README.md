@@ -18,3 +18,7 @@ killall qs
 qs -p ~/.config/bspwm/jkbar/shell.qml &
 
 Even though it satisfies my own needs, JKBar should probably be considered a starting point for customizing your own quickshell bar as the code may need some tweaking to suit your own environment.
+
+My video featuring JKBar can be found here:
+
+https://www.youtube.com/watch?v=hHRG6Z3KZpc
