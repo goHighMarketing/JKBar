@@ -14,6 +14,7 @@ Make a folder in your config directory (ie - ~/.config/bspwm/jkbar) and extract 
 Add this to your config startup:  
 
 killall qs
+
 qs -p ~/.config/bspwm/jkbar/shell.qml &
 
 
