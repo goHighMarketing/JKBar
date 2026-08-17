@@ -12,8 +12,8 @@ The obvious minimum requirements:  BSPWM, sxhkd, rofi, a polkit (ie, lxpolkit, o
 Make a folder in your config directory (ie - ~/.config/bspwm/jkbar) and extract the qml files there.
 Add this to your config startup:  
 
-# Quickshell bar
 killall qs
+
 qs -p ~/.config/bspwm/jkbar/shell.qml &
 
 
