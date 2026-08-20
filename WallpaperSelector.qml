@@ -86,7 +86,7 @@ Item {
                 implicitHeight: 20
                 radius: 4
                 color: refreshArea.containsMouse ? "#313244" : "transparent"
-                Text { anchors.centerIn: parent; text: "🔄"; font.pixelSize: 10 }
+                Text { anchors.centerIn: parent; color: "#dedede"; font.family: "Twemoji Mozilla"; text: "🗘"; font.pixelSize: 10 }
                 MouseArea {
                     id: refreshArea
                     anchors.fill: parent
