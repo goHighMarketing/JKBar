@@ -4,6 +4,16 @@ A Quickshell Bar for BSPWM
 This is a pet project I built for my BSPWM desktop as an alternative to Polybar.  
 I wanted something a little more modern that I could enjoy in an X11 environment.
 
+New:  
+
+* Wallpaper selector now has right-click preview window.  Both wallpaper drawer and preview closes when clicking outside of the drawer.
+
+* Wallpaper Drawer and Control Centre Popup has a light-box effect when opened if using picom with blur.
+
+* Improvements to general aesthetics and colours.
+
+* Added full colour Emojis for the bar items and weather module.
+
 Dependencies:  Quickshell, JetBrainsMono Nerd Font, feh (for wallpaper), gsimplecal (calendar when righ-clicking clock), pavucontrol (for right-click volume).
   xdotool (for active window)
 
