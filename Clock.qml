@@ -5,7 +5,7 @@ import Quickshell.Io
 
 MouseArea {
     id: clockRoot
-    
+
     // Explicit sizing for a clean, non-collapsing layout on your bar
     implicitWidth: clockText.implicitWidth + 10
     implicitHeight: 24
@@ -34,18 +34,18 @@ MouseArea {
 
     // Helper functions to format the QML JavaScript Date
     function formatTime() {
-	const currTime = new Date();
-	let month = String(currTime.getMonth() + 1).padStart(2, '0');
-	const months = [
-	  'January', 'February', 'March', 'April', 'May', 'June', 
-	  'July', 'August', 'September', 'October', 'November', 'December'
-	];
-	const monthText = months[currTime.getMonth()];
+    const currTime = new Date();
+    let month = String(currTime.getMonth() + 1).padStart(2, '0');
+    const months = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+    const monthText = months[currTime.getMonth()];
         let day = String(currentTime.getDate()).padStart(2, '0');
         let hours = String(currentTime.getHours()).padStart(2, '0');
         let minutes = String(currentTime.getMinutes()).padStart(2, '0');
         let seconds = String(currentTime.getSeconds()).padStart(2, '0');
-        
+
         if (showSeconds) {
             let year = currentTime.getFullYear();
             let month = String(currentTime.getMonth() + 1).padStart(2, '0');
@@ -58,7 +58,7 @@ MouseArea {
 
     // Left click toggles seconds, right click spawns the calendar
     onClicked: (mouse) => {
-        if (mouse.button === Qt.LeFftButton) {
+        if (mouse.button === Qt.LeftButton) {
             showSeconds = !showSeconds;
         } else if (mouse.button === Qt.RightButton) {
             runCal.running = true;
