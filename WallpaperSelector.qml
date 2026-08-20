@@ -96,17 +96,39 @@ Item {
             }
         }
 
-        // Horizontal scrolling gallery
+        // Horizontal scrolling gallery (THE TRUE FLICKABLE CONTENTX FIX)
         ScrollView {
             id: galleryScroll
             Layout.fillWidth: true
             Layout.fillHeight: true
-
-            // Crucial: Tell ScrollView to read the true pixel width of our inner Row
             contentWidth: rowItems.width
 
             ScrollBar.horizontal.policy: ScrollBar.AsNeeded
             ScrollBar.vertical.policy: ScrollBar.AlwaysOff
+
+            // ================= AUTO-SCROLL ENGINE BACKEND =================
+            property string scrollDirection: "none"
+            // Fine-tuned for standard pixel displacement steps per frame loop tick
+           property real scrollStepPixelSize: 15.0
+
+            Timer {
+                id: autoScrollTimer
+                interval: 16 // Silky smooth ~60fps pacing clock loop
+                running: galleryScroll.scrollDirection !== "none"
+                repeat: true
+                onTriggered: {
+                    // FIX: Target the internal Flickable canvas layer (contentItem) directly!
+                    let currentPixelX = galleryScroll.contentItem.contentX;
+                    let maxPixelX = Math.max(0, galleryScroll.contentWidth - galleryScroll.width);
+
+                    if (galleryScroll.scrollDirection === "right") {
+                        galleryScroll.contentItem.contentX = Math.min(maxPixelX, currentPixelX + galleryScroll.scrollStepPixelSize);
+                    } else if (galleryScroll.scrollDirection === "left") {
+                        galleryScroll.contentItem.contentX = Math.max(0, currentPixelX - galleryScroll.scrollStepPixelSize);
+                    }
+                }
+            }
+            // ==============================================================
 
             Text {
                 visible: wallpaperModel.count === 0
@@ -117,13 +139,12 @@ Item {
                 anchors.centerIn: parent
             }
 
-            // Modern Wheel Interceptor
+            // Keep your exact original wheel scrolling physics intact
             WheelHandler {
                 id: wheelHandler
                 acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
                 onWheel: (wheel) => {
                     if (wheel.angleDelta.y !== 0) {
-                        // Scroll by 40 pixels per mouse tick
                         let step = (wheel.angleDelta.y / 120) * 40;
                         galleryScroll.ScrollBar.horizontal.position = Math.max(0,
                             Math.min(1.0 - galleryScroll.ScrollBar.horizontal.size,
@@ -133,7 +154,6 @@ Item {
                 }
             }
 
-            // FIX: Using standard 'Row' instead of 'RowLayout' calculates dimensions perfectly for ScrollView
             Row {
                 id: rowItems
                 spacing: 8
@@ -147,7 +167,6 @@ Item {
                         implicitHeight: 130
                         radius: 4
                         color: "#181825"
-
                         border.color: thumbnailMouseArea.containsMouse ? "#f5c2e7" : "transparent"
                         border.width: 1.5
                         clip: true
@@ -178,34 +197,60 @@ Item {
                             }
                         }
 
-                        // UPDATED: Dual-click mouse tracking area
                         MouseArea {
                             id: thumbnailMouseArea
                             anchors.fill: parent
                             hoverEnabled: true
                             z: 1
-
-                            // Accept BOTH standard left clicks and contextual right clicks
                             acceptedButtons: Qt.LeftButton | Qt.RightButton
-
                             onClicked: (mouse) => {
                                 if (mouse.button === Qt.LeftButton) {
-                                    // Left click = Set the background wallpaper instantly
                                     setWallpaper(model.fileName);
                                 } else if (mouse.button === Qt.RightButton) {
-                                    // Right click = Safely route the image path up to our parent preview shield
-                                    let targetUrl = selectorRoot.wallpaperDirUrl + model.fileName;
+                                   // Right click = Safely route the image path up to our parent preview shield
+                                   let targetUrl = selectorRoot.wallpaperDirUrl + model.fileName;
 
-                                    // Looks up the component tree to trigger the custom overlay window
-                                    if (typeof root.showPreviewPopup === "function") {
-                                        root.showPreviewPopup(targetUrl);
-                                    }
-                                }
+                                   // Looks up the component tree to trigger the custom overlay window
+                                   if (typeof root.showPreviewPopup === "function") {
+                                       root.showPreviewPopup(targetUrl);
+                                   }
+                               }
                             }
                         }
                     }
                 }
             }
+
+            // ================= VISUAL HOVER EDGE INTERCEPTORS =================
+            // FIX: Instead of anchoring to dynamic bounds, we use explicit top-level window
+            // viewport dimensions so they stay locked as absolute layout rails on the sides.
+            MouseArea {
+                id: leftScrollZone
+                width: 50
+                height: galleryScroll.height
+                x: galleryScroll.contentItem.contentX // Syncs coordinate grid dynamically as the list shifts
+                anchors.top: parent.top
+                hoverEnabled: true
+                z: 10
+
+                onEntered: galleryScroll.scrollDirection = "left"
+                onExited: galleryScroll.scrollDirection = "none"
+            }
+
+            MouseArea {
+                id: rightScrollZone
+                width: 50
+                height: galleryScroll.height
+                // Force position to stay anchored perfectly to the right frame edge at all times
+                x: galleryScroll.contentItem.contentX + galleryScroll.availableWidth - 50
+                anchors.top: parent.top
+                hoverEnabled: true
+                z: 10
+
+                onEntered: galleryScroll.scrollDirection = "right"
+                onExited: galleryScroll.scrollDirection = "none"
+            }
+            // ==================================================================
         }
     }
 }
