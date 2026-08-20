@@ -58,7 +58,7 @@ MouseArea {
 
     // Left click toggles seconds, right click spawns the calendar
     onClicked: (mouse) => {
-        if (mouse.button === Qt.LeftButton) {
+        if (mouse.button === Qt.LeFftButton) {
             showSeconds = !showSeconds;
         } else if (mouse.button === Qt.RightButton) {
             runCal.running = true;
@@ -72,6 +72,6 @@ MouseArea {
         font.family: "JetBrainsMono Nerd Font"
         font.pixelSize: 16
         font.weight: Font.Medium
-        color: "#ffffff"
+        color: "#ffff7f"
     }
 }

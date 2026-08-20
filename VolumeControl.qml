@@ -69,8 +69,10 @@ RowLayout {
             // Dynamic Icon
             Text {
                 font.family: "JetBrainsMono Nerd Font"
-                font.pixelSize: 16
-                color: "#ffffff"
+                font.pixelSize: 18
+                color: (!Pipewire.defaultAudioSink || !Pipewire.defaultAudioSink.audio || Pipewire.defaultAudioSink.audio.muted)
+                                       ? "#ff007f"
+                                       : "#55ffb0"
                 Layout.alignment: Qt.AlignVCenter
 
                 text: {
@@ -92,7 +94,9 @@ RowLayout {
             Text {
                 font.family: "JetBrainsMono Nerd Font"
                 font.pixelSize: 14
-                color: "#ffffff"
+                color: (!Pipewire.defaultAudioSink || !Pipewire.defaultAudioSink.audio || Pipewire.defaultAudioSink.audio.muted)
+                                       ? "#ff62a9"
+                                       : "#ffffff"
                 font.weight: Font.Medium
                 Layout.alignment: Qt.AlignVCenter
 

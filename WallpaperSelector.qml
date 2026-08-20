@@ -6,12 +6,25 @@ import Quickshell.Io
 
 Item {
     id: selectorRoot
-    // FIX: Hard-code the dashboard dimensions so it doesn't crash the panel
-    implicitWidth: 1850
-    implicitHeight: 250
 
+    // Everything else flows down normally right into your properties:
     readonly property string rawWallpaperDir: "/home/toadwick/Pictures/wallhaven.cc"
     readonly property string wallpaperDirUrl: "file://" + rawWallpaperDir + "/"
+
+    // --- FOCUS & ESCAPE KEY DISMISSAL TRACKER ---
+    // Tells the inner QML layout graph that it can accept keyboard inputs
+    focus: true
+
+    Keys.onPressed: (event) => {
+        if (event.key === Qt.Key_Escape) {
+            // Safely targets the wrapping PopupWindow directly and closes it!
+            if (selectorRoot.parent && selectorRoot.parent.hasOwnProperty("visible")) {
+                selectorRoot.parent.visible = false;
+            }
+            event.accepted = true; // Stop the keystroke event from leaking to bspwm
+        }
+    }
+    // ============================================
 
     function setWallpaper(fileName) {
         let fullPath = rawWallpaperDir + "/" + fileName;
@@ -135,12 +148,10 @@ Item {
                         radius: 4
                         color: "#181825"
 
-                        // Safe property binding: Looks forward down to the mouse area ID below
                         border.color: thumbnailMouseArea.containsMouse ? "#f5c2e7" : "transparent"
                         border.width: 1.5
                         clip: true
 
-                        // The visual contents
                         ColumnLayout {
                             anchors.fill: parent
                             spacing: 1
@@ -167,14 +178,30 @@ Item {
                             }
                         }
 
-                        // FIX: MouseArea sits at the bottom with z: 1 so it handles clicks and hover,
-                        // but doesn't shield the parent WheelHandler from mouse wheel spins
+                        // UPDATED: Dual-click mouse tracking area
                         MouseArea {
                             id: thumbnailMouseArea
                             anchors.fill: parent
                             hoverEnabled: true
                             z: 1
-                            onClicked: setWallpaper(model.fileName);
+
+                            // Accept BOTH standard left clicks and contextual right clicks
+                            acceptedButtons: Qt.LeftButton | Qt.RightButton
+
+                            onClicked: (mouse) => {
+                                if (mouse.button === Qt.LeftButton) {
+                                    // Left click = Set the background wallpaper instantly
+                                    setWallpaper(model.fileName);
+                                } else if (mouse.button === Qt.RightButton) {
+                                    // Right click = Safely route the image path up to our parent preview shield
+                                    let targetUrl = selectorRoot.wallpaperDirUrl + model.fileName;
+
+                                    // Looks up the component tree to trigger the custom overlay window
+                                    if (typeof root.showPreviewPopup === "function") {
+                                        root.showPreviewPopup(targetUrl);
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -182,4 +209,3 @@ Item {
         }
     }
 }
-

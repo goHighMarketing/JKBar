@@ -7,7 +7,7 @@ import Quickshell.Io
 
 RowLayout {
     id: weatherRoot
-    spacing: 6
+    spacing: 12
 
     property string weatherString: "Loading..."
     
@@ -81,9 +81,9 @@ RowLayout {
 	if (desc.includes("haze")) return "⛅";
         if (desc.includes("cloudy") || desc.includes("overcast")) return "☁️";
         if (desc.includes("rain") || desc.includes("shower") || desc.includes("drizzle")) return "🌧️";
-        if (desc.includes("patchy") && desc.includes("snow")) return "🌨️";
+        if (desc.includes("patchy") && desc.includes("snow")) return "🌦️";
         if (desc.includes("thunder") || desc.includes("storm")) return "⛈️";
-	if (desc.includes("patchy") && desc.includes("rain")) return "🌦️";
+    if (desc.includes("patchy") && desc.includes("rain")) return "🌦️";
         if (desc.includes("snow") || desc.includes("ice") || desc.includes("flurry")) return "❄️";
         if (desc.includes("fog") || desc.includes("mist")) return "🌫️";
         return "🌤️";
@@ -100,9 +100,24 @@ RowLayout {
         text: weatherRoot.weatherString
         font.family: "JetBrainsMono Nerd Font"
         font.pixelSize: 14
-	font.weight: Font.Bold
-        color: "#f8f8f2"  //  "#a9b1d6"
+        font.weight: Font.Bold
+        color: "#aaddff"  //  "#a9b1d6"
         Layout.alignment: Qt.AlignVCenter
+
+        // INLINE COLOR EMOJI INJECTION (for full colour emojis)
+        // wget -O ~/.local/share/fonts/TwemojiMozilla.ttf https://github.com/mozilla/twemoji-colr/releases/download/v0.7.0/Twemoji.Mozilla.ttf
+        // clear cache:  fc-cache -fv
+        Text {
+            // Grabs ONLY the first character (the raw emoji glyph string)
+            text: weatherRoot.weatherString.substring(0, 2)
+            font.family: "Twemoji Mozilla"
+            font.pixelSize: 14
+
+            // This locks it cleanly to sit right in front of the main temperature block text
+            anchors.left: parent.left
+            anchors.rightMargin: 6
+            anchors.verticalCenter: parent.verticalCenter
+        }
 
         MouseArea {
             id: hoverArea
@@ -153,14 +168,18 @@ RowLayout {
                                 anchors.verticalCenter: parent.verticalCenter
                             }
                             
-                            // Emoji column
-                            Text {
-                                text: model.condition
-                                width: 20
-                                font.family: "JetBrainsMono Nerd Font"
-                                font.pixelSize: 16
-                                anchors.verticalCenter: parent.verticalCenter
-                            }
+                             // Emoji column (FIXED VIA VECTOR WEATHER GLYPHS)
+                             Text {
+                                 text: model.condition
+                                 width: 24
+                                 // font.family: "JetBrainsMono Nerd Font Mono"
+                                 font.family: "Twemoji Mozilla"
+                                 font.styleName: "Mono"
+                                 font.pixelSize: 16
+                                 color: "#b4befe" // Native vector color injection! No more black silhouettes.
+                                 horizontalAlignment: Text.AlignHCenter
+                                 anchors.verticalCenter: parent.verticalCenter
+                             }
                             
                             // NEW: Midday Text Condition column (e.g., "Partly Cloudy")
                             Text {

@@ -5,6 +5,12 @@ import QtQuick.Controls
 import Quickshell
 import Quickshell.Io
 
+// Uses TW-Emoji Mozilla fonts for full colour emojis, or use "JetBrainsMono Nerd Font"
+// mkdir ~/.local/share/fonts
+// wget -O ~/.local/share/fonts/TwemojiMozilla.ttf https://github.com/mozilla/twemoji-colr/releases/download/v0.7.0/Twemoji.Mozilla.ttf
+// clear cache:  fc-cache -fv
+
+
 ShellRoot {
     id: root
 
@@ -13,6 +19,15 @@ ShellRoot {
     property bool controlCenterOpen: false
     property bool isAppFullscreen: false
     property bool nightLightActive: false
+
+    // --- PREVIEW SYSTEM VARIABLES ---
+    property bool isPreviewOpen: false
+    property string activePreviewUrl: ""
+
+    function showPreviewPopup(imgUrl) {
+        activePreviewUrl = imgUrl;
+        isPreviewOpen = true;
+    }
 
     // --- DATA FETCHING & PROCESSES ---
 
@@ -110,13 +125,39 @@ ShellRoot {
                 anchors.verticalCenter: parent.verticalCenter
                 spacing: 12 // Comfortable spacing between the launcher and workspace dots
 
-                // ---    THE ROFI APP LAUNCHER BUTTON ---
+                // ---    THE ROFI APP LAUNCHER BUTTON (WITH HOVER GLOW) ---
                 Rectangle {
-                    implicitWidth: 32
-                    implicitHeight: 28
+                    id: launcherBtn
+                    width: 32
+                    height: 28
                     radius: 6
-                    color: "#74c7ec" // Catppuccin Sapphire
-                    anchors.verticalCenter: parent.verticalCenter
+
+                    // Core Background Accent: Shift from Sapphire to a vibrant neon Cyan on hover
+                    color: launcherMouse.containsMouse ? "#94e2d5" : "#74c7ec"
+
+                    // Smooth Color Interpolation Engine
+                    Behavior on color {
+                        ColorAnimation { duration: 200; easing.type: Easing.OutQuad }
+                    }
+
+                    // THE GLOW LAYER: An outer visual expansion ring that fades in smoothly
+                    Rectangle {
+                        anchors.fill: parent
+                        anchors.margins: -3 // Expands slightly outside the boundaries of the main button
+                        radius: 8
+                        z: -1 // Renders safely beneath your text and main container button
+
+                        // Use a highly translucent version of your accent color (#30 opacity hex mask)
+                        color: "#3074c7ec"
+
+                        // Instantly toggle visibility based on hover tracking
+                        opacity: launcherMouse.containsMouse ? 1.0 : 0.0
+
+                        // Smooth Fade Animation Track
+                        Behavior on opacity {
+                            NumberAnimation { duration: 250; easing.type: Easing.OutQuad }
+                        }
+                    }
 
                     Text {
                         anchors.centerIn: parent
@@ -128,13 +169,13 @@ ShellRoot {
                     }
 
                     MouseArea {
+                        id: launcherMouse
                         anchors.fill: parent
-                        cursorShape: Qt.PointingHandCursor
+                        hoverEnabled: true // CRUCIAL: Tells the layout engine to listen for cursor position sweeps
+                        // cursorShape: Qt.PointingHandCursor
 
                         onClicked: {
                             root.controlCenterOpen = false;
-
-                            // FIXED: Wrapping inside sh -c allows terminal environmental shortcuts like ~ or $HOME to resolve natively
                             Quickshell.execDetached([
                                 "sh", "-c",
                                 "rofi -show drun -modi drun -line-padding 4 -hide-scrollbar -show-icons -theme ~/.config/bspwm/rofi/config-jkbar.rasi"
@@ -157,6 +198,8 @@ ShellRoot {
                         anchors.centerIn: parent
                         text: "🖼️"
                         font.pixelSize: 12
+                        font.family: "Twemoji Mozilla"
+                        color: "#b4befe"
                     }
 
                     MouseArea {
@@ -164,13 +207,151 @@ ShellRoot {
                         anchors.fill: parent
                         hoverEnabled: true
                         onClicked: {
-                            // Toggles the visibility state cleanly on click
-                            wallpaperPopup.visible = !wallpaperPopup.visible;
+                            // Toggles our full-screen shield window state cleanly on click
+                            wallpaperFullShield.visible = !wallpaperFullShield.visible;
                         }
                     }
                 }
 
-                // NATIVE QUICKSHELL POPUP WINDOW
+                // --- X11 BULLETPROOF WALLPAPER DISMISSAL CONTAINER ---
+                // Instead of a standalone popup, we spin up a full screen invisible layer
+                PanelWindow {
+                    id: wallpaperFullShield
+                    visible: false
+
+                    // Lock this panel to expand across the entire monitor canvas surface
+                    anchors.top: true
+                    anchors.bottom: true
+                    anchors.left: true
+                    anchors.right: true
+
+                    // Force transparency so your terminal windows show through perfectly
+                    color: "#00000000"
+
+                    // Instructs bspwm to completely ignore this frame layer for tiling allocation
+                    exclusionMode: ExclusionMode.None
+
+                    // ================= FULL SCREEN MOUSE SHIELD =================
+                    // Clicking ANY empty workspace zone outside your selector box closes it instantly!
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            wallpaperFullShield.visible = false;
+                        }
+                    }
+                    // ============================================================
+
+                    // --- THE ACTUAL VISUAL WALLPAPER DRAWER RECTANGLE ---
+                    // Nesting the visual geometry here maps it right back to your panel bar coordinates
+                    Rectangle {
+                        width: 1850
+                        height: 250
+                        color: "transparent" // Let the selector component's theme color pass through
+
+                        // Positioning calculations matching your exact old offsets
+                        x: mainBar.x + (mainBar.width - 1850) - 20 // Adjust coordinates to align with your top button
+                        y: 46
+
+                        // Prevent pointer clicks inside the actual gallery card from triggering the shield close
+                        MouseArea {
+                            anchors.fill: parent
+                            propagateComposedEvents: false
+                            onClicked: (mouse) => mouse.accepted = true
+                        }
+
+                        WallpaperSelector {
+                            anchors.fill: parent
+                        }
+                    }
+                }
+
+                // --- X11 BULLETPROOF PREVIEW POPUP CONTAINER ---
+                PanelWindow {
+                    id: wallpaperPreviewShield
+                    visible: root.isPreviewOpen
+
+                    // Lock this panel to expand across the entire monitor canvas surface
+                    anchors.top: true
+                    anchors.bottom: true
+                    anchors.left: true
+                    anchors.right: true
+
+                    // Force transparency so your wallpaper gallery remains beautifully visible behind it
+                    color: "#00000000"
+                    exclusionMode: ExclusionMode.None
+
+                    // ================= FULL SCREEN MOUSE SHIELD =================
+                    // Clicking ANY area outside the 1024x720 preview panel drops it out of view instantly!
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            root.isPreviewOpen = false;
+                            root.activePreviewUrl = "";
+                        }
+                    }
+                    // ============================================================
+
+                    // --- THE ACTUAL VISUAL 1024x720 PREVIEW WINDOW ---
+                    Rectangle {
+                        width: 1024
+                        height: 720
+                        color: "#181825" // Catppuccin Mocha Crust
+                        radius: 12
+
+                        // Locks the large preview frame dead-center on your active monitor canvas
+                        anchors.centerIn: parent
+
+                        // Stop clicks inside the picture card from closing the panel accidentally
+                        MouseArea {
+                            anchors.fill: parent
+                            propagateComposedEvents: false
+                            onClicked: (mouse) => mouse.accepted = true
+                        }
+
+                        // Outer border accent path
+                        Rectangle {
+                            anchors.fill: parent
+                            color: "transparent"
+                            border.color: "#313244"
+                            border.width: 2
+                            radius: 12
+                            z: 2
+                        }
+
+                        // High-fidelity image layout viewport
+                        Image {
+                            anchors.fill: parent
+                            anchors.margins: 4
+                            source: root.activePreviewUrl
+                            fillMode: Image.PreserveAspectFit // Preserves ratio gracefully inside the box limits
+                            asynchronous: true
+                            smooth: true
+                        }
+
+                        // Subtle metadata overlay tab at the bottom
+                        Rectangle {
+                            width: parent.width - 8
+                            height: 35
+                            color: "#11111b"
+                            opacity: 0.85
+                            anchors.bottom: parent.bottom
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.bottomMargin: 4
+                            radius: 8
+                            z: 3
+
+                            Text {
+                                anchors.centerIn: parent
+                                text: "Left-Click anywhere outside this preview to close"
+                                font.family: "JetBrainsMono Nerd Font"
+                                font.pixelSize: 11
+                                color: "#a6adc8"
+                            }
+                        }
+                    }
+                } // End of Preview Container Window
+
+               // NATIVE QUICKSHELL POPUP WINDOW
                 PopupWindow {
                     id: wallpaperPopup
                     visible: false
@@ -182,12 +363,24 @@ ShellRoot {
                     anchor.window: mainBar
 
                     // POSITIONING MATRIX:
-                    // Shifts layout left (-296) and drops it nicely below the bar (6)
                     anchor.rect: wallpaperButton.mapToItem(mainBar.contentItem, -296, 40, wallpaperButton.width, wallpaperButton.height)
 
-                    // THE CLOSING FIX:
-                    // Native flag tells Quickshell to close the window when you click outside of it
+                    // Tells Quickshell to watch global pointer tracking hooks
                     grabFocus: true
+
+                    // ================= CLICK DISMISSAL TRACKER =================
+                    Connections {
+                        target: wallpaperPopup
+
+                        // Fires the millisecond you click outside the 1850x250 rectangle
+                        // and focus shifts back to your terminal, browser, or bspwm desktop background
+                        function onActiveChanged() {
+                            if (!wallpaperPopup.active) {
+                                wallpaperPopup.visible = false;
+                            }
+                        }
+                    }
+                    // ===========================================================
 
                     WallpaperSelector {
                         anchors.fill: parent
@@ -207,6 +400,10 @@ ShellRoot {
                             height: 28
                             radius: 6
                             color: modelData.isFocused ? "#3d59a1" : "transparent"
+                            // Smooth Color Interpolation Engine
+                            Behavior on color {
+                                ColorAnimation { duration: 200; easing.type: Easing.OutQuad }
+                            }
 
                             Text {
                                 anchors.centerIn: parent
@@ -224,15 +421,35 @@ ShellRoot {
                             }
 
                             MouseArea {
+                                id: wsMouse
                                 anchors.fill: parent
+                                hoverEnabled: true // Active tracking enabled
                                 onClicked: {
                                     Quickshell.execDetached(["bspc", "desktop", "-f", modelData.name])
                                 }
                             }
+                            Rectangle {
+                                anchors.fill: parent
+                                anchors.margins: -3 // Expands slightly outside the boundaries of the main button
+                                radius: 8
+                                z: -1 // Renders safely beneath your text and main container button
+
+                                // Use a highly translucent version of your accent color (#30 opacity hex mask)
+                                color: "#3074c7ec"
+
+                                // Instantly toggle visibility based on hover tracking
+                                opacity: wsMouse.containsMouse ? 1.0 : 0.0
+
+                                // Smooth Fade Animation Track
+                                Behavior on opacity {
+                                    NumberAnimation { duration: 250; easing.type: Easing.OutQuad }
+                                }
+                            }
                         }
                     }
+                    // THE GLOW LAYER: An outer visual expansion ring that fades in smoothly
                 }
-            } // End of Left Row
+             } // End of Left Row
 
 
             // Optional: You can put your ActiveWindow title right next to the workspaces if you want
@@ -255,11 +472,13 @@ ShellRoot {
                 spacing: 15
 
                 Weather {
-                    anchors.verticalCenter: parent.verticalCenter
+                   width: implicitWidth > 0 ? 66: implicitWidth
+                   anchors.verticalCenter: parent.verticalCenter
                 }
 
                 VolumeControl {
-                    anchors.verticalCenter: parent.verticalCenter
+                  // anchors.right: parent.right
+                   anchors.verticalCenter: parent.verticalCenter
                 }
 
                 SysTray {
@@ -270,22 +489,48 @@ ShellRoot {
                }
 
 
-                               // Control Center Trigger Button
+                // Control Center Trigger Button (WITH HOVER GLOW)
                 Rectangle {
+                    id: gearBtn
                     anchors.verticalCenter: parent.verticalCenter
                     width: 35
                     height: 28
                     radius: 6
-                    color: root.controlCenterOpen ? "#f5c2e7" : "#313244"
+
+                    // State + Hover Color Matrix Mapping
+                    color: root.controlCenterOpen ? "#f5c2e7" : (gearMouse.containsMouse ? "#45475a" : "#313244")
+
+                    Behavior on color {
+                        ColorAnimation { duration: 200; easing.type: Easing.OutQuad }
+                    }
+
+                    // THE GLOW LAYER: Translucent Mauve halo ring that wakes up on pointer sweep
+                    Rectangle {
+                        anchors.fill: parent
+                        anchors.margins: -3
+                        radius: 8
+                        z: -1
+                        color: "#30f5c2e7" // Translucent Catppuccin Mauve glow halo
+                        opacity: gearMouse.containsMouse && !root.controlCenterOpen ? 1.0 : 0.0
+
+                        Behavior on opacity {
+                            NumberAnimation { duration: 250; easing.type: Easing.OutQuad }
+                        }
+                    }
 
                     Text {
                         anchors.centerIn: parent
+                        font.family: "Twemoji Mozilla"
                         text: "⚙️"
                         color: root.controlCenterOpen ? "#11111b" : "#cdd6f4"
                     }
 
                     MouseArea {
+                        id: gearMouse
                         anchors.fill: parent
+                        hoverEnabled: true // Active tracking enabled
+                        // cursorShape: Qt.PointingHandCursor
+
                         onClicked: {
                             if (root.controlCenterOpen) {
                                 root.controlCenterOpen = false;
@@ -306,7 +551,7 @@ ShellRoot {
     PanelWindow {
             id: controlCenterOverlay
             visible: root.controlCenterOpen
-
+/*
             anchors.top: true
             anchors.right: true
             implicitWidth: 680
@@ -317,7 +562,7 @@ ShellRoot {
                 top: 0
                 right: 4
             }
-/*
+*/
             // Lock this panel to cover the entire viewport surface
             anchors.top: true
             anchors.bottom: true
@@ -340,7 +585,7 @@ ShellRoot {
                 }
             }
             // ============================================================
-*/
+
             // --- THE ACTUAL VISUAL CONTROL CENTER RECTANGLE ---
             Rectangle {
                 id: controlCenter
@@ -399,7 +644,7 @@ ShellRoot {
                         Item { Layout.fillWidth: true }
 
                         Text {
-                            text: "Fedora Ultramarine"
+                            text: "JKBar - The Quickshell bar for BSPWM"
                             font.family: "JetBrainsMono Nerd Font"
                             font.pixelSize: 11
                             color: "#a6adc8"
