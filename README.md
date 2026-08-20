@@ -14,6 +14,8 @@ New:
 
 * Added full colour Emojis for the bar items and weather module.
 
+* Buttons now have a hover glow effect when moused over.
+
 Dependencies:  Quickshell, JetBrainsMono Nerd Font, feh (for wallpaper), gsimplecal (calendar when righ-clicking clock), pavucontrol (for right-click volume).
   xdotool (for active window)
 
