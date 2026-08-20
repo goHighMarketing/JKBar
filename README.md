@@ -8,6 +8,8 @@ New:
 
 * Wallpaper selector now has right-click preview window.  Both wallpaper drawer and preview closes when clicking outside of the drawer.
 
+* Wallpaper selector will auto scroll when mouse hovers within 50px of either the right or left edge of the gallery display.
+
 * Wallpaper Drawer and Control Centre Popup has a light-box effect when opened if using picom with blur.
 
 * Improvements to general aesthetics and colours.
