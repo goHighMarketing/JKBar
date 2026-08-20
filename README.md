@@ -23,7 +23,9 @@ My video featuring JKBar can be found here:
 
 https://www.youtube.com/watch?v=hHRG6Z3KZpc
 
-** For full color Emojis** in the bar use TwemojiMozilla.ttf fonts.  To install them, open your terminal & add these lines:
+* For full color Emojis in the bar use TwemojiMozilla.ttf fonts.
+
+*     To install them, open your terminal & add these lines:
 
 mkdir ~/.local/share/fonts
 
