@@ -5,7 +5,7 @@ import QtQuick.Controls
 import Quickshell
 import Quickshell.Io
 
-// Uses TW-Emoji Mozilla fonts for full colour emojis, or use "JetBrainsMono Nerd Font"
+// Uses "Twemoji Mozilla" fonts for full colour emojis, or use "JetBrainsMono Nerd Font"
 // mkdir ~/.local/share/fonts
 // wget -O ~/.local/share/fonts/TwemojiMozilla.ttf https://github.com/mozilla/twemoji-colr/releases/download/v0.7.0/Twemoji.Mozilla.ttf
 // clear cache:  fc-cache -fv
