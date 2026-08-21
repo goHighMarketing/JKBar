@@ -57,7 +57,7 @@ https://www.youtube.com/watch?v=hHRG6Z3KZpc
       clear cache:  fc-cache -fv
 
 * JKBar was created for my own personal use, however anyone is free to use it, but I don't have time to offer support or hold someone's hand to set it up.
-  But, if you know your way around a little scripting or a Claude code AI prompt, this can serve as a pretty starting point for customizing your own quickshell bar
+  But, if you know your way around a little scripting or an AI prompt, this can serve as a pretty good starting point for customizing your own quickshell bar
   as this code may need some tweaking to suit your own unique environment.
  
 
