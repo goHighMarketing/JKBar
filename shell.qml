@@ -59,7 +59,7 @@ ShellRoot {
         // Triggers instantly on desktop changes or window layout shifts
         command: ["bspc", "subscribe", "node_state", "desktop_focus"]
         running: true
-        
+
         stdout: SplitParser {
             onRead: (data) => {
                 bspcCheckCurrentFullscreen.running = true;
@@ -70,15 +70,15 @@ ShellRoot {
     // Secondary sub-process to evaluate focused viewport layout masks safely
     Process {
         id: bspcCheckCurrentFullscreen
-        // Shell Script Trap: Checks for a fullscreen node locally. 
+        // Shell Script Trap: Checks for a fullscreen node locally.
         // If found, echoes "yes". If empty/error, safely echoes "no" and forces exit code 0.
         command: ["sh", "-c", "if bspc query -N -n .local.fullscreen > /dev/null 2>&1; then echo 'yes'; else echo 'no'; fi"]
         running: false
-        
+
         stdout: SplitParser {
             onRead: (data) => {
                 let response = data.toString().trim();
-                
+
                 if (response === "yes") {
                     root.isAppFullscreen = true;
                 } else {
@@ -647,6 +647,16 @@ ShellRoot {
                             text: "JKBar - The Quickshell bar for BSPWM"
                             font.family: "JetBrainsMono Nerd Font"
                             font.pixelSize: 11
+                            color: "#a6adc8"
+                        }
+                    }
+
+                    BrightnessSlider {
+                        Layout.fillWidth: false
+                        Text {
+                            text: "Brightness"
+                            font.family: "JetBrainsMono Nerd Font"
+                            font.pixelSize: 12
                             color: "#a6adc8"
                         }
                     }

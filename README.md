@@ -18,6 +18,17 @@ New:
 
 * Buttons now have a hover glow effect when moused over.
 
+* Added Brightness Control to the Control Center
+
+* Activate brightnessctl if the slider isn't working:
+
+	# 1. Add your user account to BOTH permissions groups required by Debian/MX Linux
+	sudo usermod -aG video,input $USER
+	
+	# 2. Grant brightnessctl native system execution privileges so it bypasses group lockouts
+	sudo chmod +s $(which brightnessctl)
+
+
 Dependencies:  Quickshell, JetBrainsMono Nerd Font, feh (for wallpaper), gsimplecal (calendar when righ-clicking clock), pavucontrol (for right-click volume).
   xdotool (for active window)
 
@@ -46,5 +57,4 @@ https://www.youtube.com/watch?v=hHRG6Z3KZpc
       wget -O ~/.local/share/fonts/TwemojiMozilla.ttf https://github.com/mozilla/twemoji-colr/releases/download/v0.7.0/Twemoji.Mozilla.ttf
 
       clear cache:  fc-cache -fv
-
 
