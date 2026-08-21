@@ -42,8 +42,6 @@ Add this to your config startup:
 			
 			qs -p ~/.config/bspwm/jkbar/shell.qml &
 
-Even though it satisfies my own needs, JKBar should probably be considered a starting point for customizing your own quickshell bar as the code may need some tweaking to suit your own environment.
-
 My video featuring JKBar can be found here:
 
 https://www.youtube.com/watch?v=hHRG6Z3KZpc
@@ -57,4 +55,9 @@ https://www.youtube.com/watch?v=hHRG6Z3KZpc
       wget -O ~/.local/share/fonts/TwemojiMozilla.ttf https://github.com/mozilla/twemoji-colr/releases/download/v0.7.0/Twemoji.Mozilla.ttf
 
       clear cache:  fc-cache -fv
+
+* JKBar was created for my own personal use, however anyone is free to use it, but I don't have time to offer support or hold someone's hand to set it up.
+  But, if you know your way around a little scripting or a Claude code AI prompt, this can serve as a pretty starting point for customizing your own quickshell bar
+  as this code may need some tweaking to suit your own unique environment.
+ 
 
