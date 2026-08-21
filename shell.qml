@@ -674,7 +674,15 @@ ShellRoot {
                             Layout.fillWidth: true
                             height: 50
                             radius: 8
-                            color: "#313244"
+                            color: muteMouse.containsMouse ? "#424355" : "#313244"
+
+                            // Instantly toggle visibility based on hover tracking
+                            opacity: muteMouse.containsMouse ? 0.9 : 1.0
+
+                            // Smooth Fade Animation Track
+                            Behavior on opacity {
+                                NumberAnimation { duration: 250; easing.type: Easing.OutQuad }
+                            }
 
                             Text {
                                 anchors.centerIn: parent
@@ -684,7 +692,9 @@ ShellRoot {
                             }
 
                             MouseArea {
+                                id: muteMouse
                                 anchors.fill: parent
+                                hoverEnabled: true
                                 onClicked: {
                                     Quickshell.execDetached(["pamixer", "-t"]);
                                     if (typeof volPoll !== 'undefined') volPoll.running = true;
@@ -698,6 +708,12 @@ ShellRoot {
                             height: 50
                             radius: 8
                             color: root.isAppFullscreen ? "#f38ba8" : "#313244"
+                            opacity: hideBarMouse.containsMouse ? 0.8 : 1.0
+
+                            // Smooth Fade Animation Track
+                            Behavior on opacity {
+                                NumberAnimation { duration: 250; easing.type: Easing.OutQuad }
+                            }
 
                             Text {
                                 anchors.centerIn: parent
@@ -707,7 +723,9 @@ ShellRoot {
                             }
 
                             MouseArea {
+                                id: hideBarMouse
                                 anchors.fill: parent
+                                hoverEnabled: true
                                 onClicked: root.isAppFullscreen = !root.isAppFullscreen
                             }
                         }
@@ -718,6 +736,12 @@ ShellRoot {
                             height: 50
                             radius: 8
                             color: root.nightLightActive ? "#fab387" : "#313244"
+                            opacity: nightlightMouse.containsMouse ? 0.8 : 1.0
+
+                            // Smooth Fade Animation Track
+                            Behavior on opacity {
+                                NumberAnimation { duration: 250; easing.type: Easing.OutQuad }
+                            }
 
                             Text {
                                 anchors.centerIn: parent
@@ -727,7 +751,9 @@ ShellRoot {
                             }
 
                             MouseArea {
+                                id: nightlightMouse
                                 anchors.fill: parent
+                                hoverEnabled: true
                                 onClicked: {
                                     root.nightLightActive = !root.nightLightActive;
                                     if (root.nightLightActive) {
@@ -744,7 +770,16 @@ ShellRoot {
                             Layout.fillWidth: true
                             height: 50
                             radius: 8
-                            color: "#f38ba8"
+                           // color: "#f38ba8"
+                            color: exitSessionMouse.containsMouse ? "#ff007f" : "#f38ba8"
+
+                            // Instantly toggle visibility based on hover tracking
+                            opacity: exitSessionMouse.containsMouse ? 0.9 : 1.0
+
+                            // Smooth Fade Animation Track
+                            Behavior on opacity {
+                                NumberAnimation { duration: 250; easing.type: Easing.OutQuad }
+                            }
 
                             Text {
                                 anchors.centerIn: parent
@@ -755,7 +790,9 @@ ShellRoot {
                             }
 
                             MouseArea {
+                                id: exitSessionMouse
                                 anchors.fill: parent
+                                hoverEnabled: true
                                 onClicked: Quickshell.execDetached(["bspc", "quit"])
                             }
                         }
@@ -955,7 +992,15 @@ ShellRoot {
                             Layout.fillWidth: true
                             height: 40
                             radius: 8
-                            color: "#313244"
+                            color: lockMouse.containsMouse ? "#424355" : "#313244"
+
+                            // Instantly toggle visibility based on hover tracking
+                            opacity: lockMouse.containsMouse ? 0.9 : 1.0
+
+                            // Smooth Fade Animation Track
+                            Behavior on opacity {
+                                NumberAnimation { duration: 250; easing.type: Easing.OutQuad }
+                            }
 
                             Text {
                                 anchors.centerIn: parent
@@ -965,8 +1010,10 @@ ShellRoot {
                             }
 
                             MouseArea {
+                                id: lockMouse
                                 anchors.fill: parent
-                                cursorShape: Qt.PointingHandCursor
+                                // cursorShape: Qt.PointingHandCursor
+                                hoverEnabled: true
                                 onClicked: {
                                     root.controlCenterOpen = false;
                                     Quickshell.execDetached(["sh", "-c", "xset dpms force off && i3lock -c 11111b"]);
@@ -979,7 +1026,15 @@ ShellRoot {
                             Layout.fillWidth: true
                             height: 40
                             radius: 8
-                            color: "#313244"
+                            color: sleepMouse.containsMouse ? "#424355" : "#313244"
+
+                            // Instantly toggle visibility based on hover tracking
+                            opacity: sleepMouse.containsMouse ? 0.9 : 1.0
+
+                            // Smooth Fade Animation Track
+                            Behavior on opacity {
+                                NumberAnimation { duration: 250; easing.type: Easing.OutQuad }
+                            }
 
                             Text {
                                 anchors.centerIn: parent
@@ -989,8 +1044,10 @@ ShellRoot {
                             }
 
                             MouseArea {
+                                id: sleepMouse
                                 anchors.fill: parent
-                                cursorShape: Qt.PointingHandCursor
+                                // cursorShape: Qt.PointingHandCursor
+                                hoverEnabled: true
                                 onClicked: {
                                     root.controlCenterOpen = false;
                                     Quickshell.execDetached(["systemctl", "suspend"]);
@@ -1003,7 +1060,15 @@ ShellRoot {
                             Layout.fillWidth: true
                             height: 40
                             radius: 8
-                            color: "#fab387"
+                            color: rebootMouse.containsMouse ? "#ff007f" : "#fab387"
+
+                            // Instantly toggle visibility based on hover tracking
+                            opacity: rebootMouse.containsMouse ? 0.9 : 1.0
+
+                            // Smooth Fade Animation Track
+                            Behavior on opacity {
+                                NumberAnimation { duration: 250; easing.type: Easing.OutQuad }
+                            }
 
                             Text {
                                 anchors.centerIn: parent
@@ -1014,8 +1079,10 @@ ShellRoot {
                             }
 
                             MouseArea {
+                                id: rebootMouse
                                 anchors.fill: parent
-                                cursorShape: Qt.PointingHandCursor
+                                // cursorShape: Qt.PointingHandCursor
+                                hoverEnabled: true
                                 onClicked: {
                                     root.controlCenterOpen = false;
                                     Quickshell.execDetached(["systemctl", "reboot"]);
@@ -1028,7 +1095,15 @@ ShellRoot {
                             Layout.fillWidth: true
                             height: 40
                             radius: 8
-                            color: "#f38ba8"
+                            color: shutdownMouse.containsMouse ? "#ff007f" : "#f38ba8"
+
+                            // Instantly toggle visibility based on hover tracking
+                            opacity: shutdownMouse.containsMouse ? 0.9 : 1.0
+
+                            // Smooth Fade Animation Track
+                            Behavior on opacity {
+                                NumberAnimation { duration: 250; easing.type: Easing.OutQuad }
+                            }
 
                             Text {
                                 anchors.centerIn: parent
@@ -1039,8 +1114,10 @@ ShellRoot {
                             }
 
                             MouseArea {
+                                id: shutdownMouse
                                 anchors.fill: parent
-                                cursorShape: Qt.PointingHandCursor
+                                // cursorShape: Qt.PointingHandCursor
+                                hoverEnabled: true
                                 onClicked: {
                                     root.controlCenterOpen = false;
                                     Quickshell.execDetached(["systemctl", "poweroff"]);
@@ -1060,9 +1137,18 @@ ShellRoot {
                     Layout.fillWidth: true
                     height: 40
                     radius: 8
-                    color: "#1e1e2e"
+                    // color: "#1e1e2e"
                     border.color: "#313244"
                     border.width: 1
+                    color: closepanelMouse.containsMouse ? "#424355" : "#313244"
+
+                    // Instantly toggle visibility based on hover tracking
+                    opacity: closepanelMouse.containsMouse ? 0.9 : 1.0
+
+                    // Smooth Fade Animation Track
+                    Behavior on opacity {
+                        NumberAnimation { duration: 250; easing.type: Easing.OutQuad }
+                    }
 
                     Text {
                         anchors.centerIn: parent
@@ -1072,8 +1158,10 @@ ShellRoot {
                     }
 
                     MouseArea {
+                        id: closepanelMouse
                         anchors.fill: parent
-                        cursorShape: Qt.PointingHandCursor
+                        // cursorShape: Qt.PointingHandCursor
+                        hoverEnabled: true
                         onClicked: root.controlCenterOpen = false
                     }
                 }
