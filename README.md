@@ -22,11 +22,11 @@ New:
 
 * Activate brightnessctl if the slider isn't working:
 
-	# 1. Add your user account to BOTH permissions groups required by Debian/MX Linux
-	sudo usermod -aG video,input $USER
-	
-	# 2. Grant brightnessctl native system execution privileges so it bypasses group lockouts
-	sudo chmod +s $(which brightnessctl)
+			# 1. Add your user account to BOTH permissions groups required by Debian/MX Linux
+			sudo usermod -aG video,input $USER
+			
+			# 2. Grant brightnessctl native system execution privileges so it bypasses group lockouts
+			sudo chmod +s $(which brightnessctl)
 
 
 Dependencies:  Quickshell, JetBrainsMono Nerd Font, feh (for wallpaper), gsimplecal (calendar when righ-clicking clock), pavucontrol (for right-click volume).
@@ -38,9 +38,9 @@ Make a folder in your config directory (ie - ~/.config/bspwm/jkbar) and extract 
 
 Add this to your config startup:  
 
-killall qs
-
-qs -p ~/.config/bspwm/jkbar/shell.qml &
+			killall qs
+			
+			qs -p ~/.config/bspwm/jkbar/shell.qml &
 
 Even though it satisfies my own needs, JKBar should probably be considered a starting point for customizing your own quickshell bar as the code may need some tweaking to suit your own environment.
 
