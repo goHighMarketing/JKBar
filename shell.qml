@@ -502,9 +502,13 @@ ShellRoot {
                      gpuZoneIndex: "thermal_zone2"
                  }
 
-                VolumeControl {
+            //    VolumeControl {
                   // anchors.right: parent.right
-                   anchors.verticalCenter: parent.verticalCenter
+            //       anchors.verticalCenter: parent.verticalCenter
+            //    }
+
+                VolumeController {
+                    Layout.alignment: Qt.AlignVCenter
                 }
 
                 SysTray {
