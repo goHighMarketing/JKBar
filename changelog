@@ -12,6 +12,8 @@ August 21, 2026 Changes:
 
 * Improved the SysTray so it expands dynamically when items appear.
 
+* Added VolumeController.qml for a volume control with a pop-out slider for nice aesthetics.
+
 -------------------------
 
 August 20, 2026 Changes:  
