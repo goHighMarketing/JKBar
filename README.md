@@ -29,7 +29,7 @@ New:
 			sudo chmod +s $(which brightnessctl)
 
 
-Dependencies:  Quickshell, JetBrainsMono Nerd Font, feh (for wallpaper), gsimplecal (calendar when righ-clicking clock), pavucontrol (for right-click volume).
+Dependencies:  Quickshell, JetBrainsMono Nerd Font, jq (for layout module), feh (for wallpaper), gsimplecal (calendar when righ-clicking clock), pavucontrol (for right-click volume).
   xdotool (for active window)
 
 The obvious minimum requirements:  BSPWM, sxhkd, rofi, a polkit (ie, lxpolkit, or mate-polkit), and a working config of course.
