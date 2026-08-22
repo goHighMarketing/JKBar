@@ -1,6 +1,14 @@
 August 21, 2026 Changes:
 
-  * Added hover effects to control centre buttons
+* Added hover effects to control centre buttons
+
+* Added Layout Switcher component
+
+* Added Network speed monitor
+
+* Added CPU / GPU Monitor
+
+* Wallpaper gallery now refreshes thumbnails when opened to show the most current entries.
 
 -------------------------
 
