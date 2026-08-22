@@ -11,6 +11,13 @@ Item {
     readonly property string rawWallpaperDir: "/home/toadwick/Pictures/wallhaven.cc"
     readonly property string wallpaperDirUrl: "file://" + rawWallpaperDir + "/"
 
+    // ================= PUBLIC REFRESH HOOK =================
+    // This allows shell.qml to cleanly tell the scanner to run
+    function refreshList() {
+        dirScanner.running = true;
+    }
+    // =======================================================
+
     // --- FOCUS & ESCAPE KEY DISMISSAL TRACKER ---
     // Tells the inner QML layout graph that it can accept keyboard inputs
     focus: true
@@ -22,7 +29,7 @@ Item {
                 selectorRoot.parent.visible = false;
             }
             event.accepted = true; // Stop the keystroke event from leaking to bspwm
-        }
+         }
     }
     // ============================================
 

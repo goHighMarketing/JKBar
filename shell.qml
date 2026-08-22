@@ -184,6 +184,10 @@ ShellRoot {
                     }
                 }
 
+                LayoutSwitcher {
+                    Layout.alignment: Qt.AlignVCenter
+                }
+
                 // WALLPAPER TRIGGER BUTTON
                 Rectangle {
                     id: wallpaperButton
@@ -207,8 +211,14 @@ ShellRoot {
                         anchors.fill: parent
                         hoverEnabled: true
                         onClicked: {
-                            // Toggles our full-screen shield window state cleanly on click
+                            // 1. Toggles our full-screen shield window state cleanly on click
                             wallpaperFullShield.visible = !wallpaperFullShield.visible;
+
+                            // 2. FIXED: If the drawer just opened, tell our selector component to refresh!
+                            if (wallpaperDrawerWindow.visible) {
+                                // Reaches down inside the container rectangle to target your wallpaper selector instantly
+                                wallpaperSelectorComponent.refreshList();
+                            }
                         }
                     }
                 }
@@ -244,6 +254,7 @@ ShellRoot {
                     // --- THE ACTUAL VISUAL WALLPAPER DRAWER RECTANGLE ---
                     // Nesting the visual geometry here maps it right back to your panel bar coordinates
                     Rectangle {
+                        id: wallpaperDrawerWindow
                         width: 1850
                         height: 250
                         color: "transparent" // Let the selector component's theme color pass through
@@ -260,6 +271,7 @@ ShellRoot {
                         }
 
                         WallpaperSelector {
+                            id: wallpaperSelectorComponent
                             anchors.fill: parent
                         }
                     }
@@ -475,6 +487,20 @@ ShellRoot {
                    width: implicitWidth > 0 ? 66: implicitWidth
                    anchors.verticalCenter: parent.verticalCenter
                 }
+
+                NetworkTracker {
+                    anchors.verticalCenter: parent.verticalCenter
+                    // Default configuration uses "wlan0".
+                    // Change this parameter line directly here if your primary connection is ethernet!
+                    targetInterface: "eth0"
+                }
+
+                SysTempMonitor {
+                     anchors.verticalCenter: parent.verticalCenter
+                     // Tweak these variable parameters if your hardware registers on different zones!
+                     cpuZoneIndex: "thermal_zone0"
+                     gpuZoneIndex: "thermal_zone2"
+                 }
 
                 VolumeControl {
                   // anchors.right: parent.right
