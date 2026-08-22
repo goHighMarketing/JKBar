@@ -10,6 +10,8 @@ August 21, 2026 Changes:
 
 * Wallpaper gallery now refreshes thumbnails when opened to show the most current entries.
 
+* Improved the SysTray so it expands dynamically when items appear.
+
 -------------------------
 
 August 20, 2026 Changes:  
