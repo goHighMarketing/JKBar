@@ -508,10 +508,8 @@ ShellRoot {
                 }
 
                 SysTray {
-                    anchors.verticalCenter: parent.verticalCenter
-                    // Coerce sizing properties safely
-                    width: implicitWidth > 0 ? implicitWidth : 60
-                    height: 28
+                   anchors.verticalCenter: parent.verticalCenter
+                   height: 28
                }
 
 
