@@ -1,6 +1,8 @@
 import QtQuick
 import QtQuick.Layouts
+import QtQuick.Controls
 import Quickshell
+import Quickshell.Widgets
 import Quickshell.Services.SystemTray
 
 RowLayout {
@@ -41,6 +43,7 @@ RowLayout {
                 model: SystemTray.items.values
 
                 delegate: Item {
+                    id: trayItemDelegate
                     implicitWidth: 16
                     implicitHeight: 16
                     Layout.alignment: Qt.AlignVCenter
@@ -65,16 +68,28 @@ RowLayout {
 
                         onClicked: (mouse) => {
                             if (mouse.button === Qt.LeftButton) {
-                                // Triggers the default action (e.g. opens application window)
                                 modelData.activate();
                             } else if (mouse.button === Qt.RightButton) {
-                                // Maps native app drop-downs (like Wi-Fi lists, Bluetooth toggles) safely
-                                if (modelData.hasMenu) {
-                                    menuAnchor.open();
+                                if (modelData.menu) {
+                                    // 1. Map the clicked coordinates relative to the entire main bar window
+                                    let globalPos = trayItemDelegate.mapToItem(mainBar.contentItem, mouseX, mouseY);
+
+                                    // 2. Pass the mapped global bar coordinates to the display method
+                                    modelData.display(mainBar, globalPos.x, globalPos.y+15);
                                 }
                             }
                         }
                     }
+                }
+            }
+            Component.onCompleted: {
+                    console.log("SystemTray items on startup: " + SystemTray.items.values.length);
+                }
+
+            Connections {
+                target: SystemTray.items
+                function onObjectInsertedPost(object, index) {
+                    console.log("Tray item added: " + object.title);
                 }
             }
         }
