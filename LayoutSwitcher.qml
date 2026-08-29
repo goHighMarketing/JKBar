@@ -71,7 +71,7 @@ MouseArea {
             Layout.alignment: Qt.AlignVCenter
 
             // Toggle icons and colors based on active workspace paradigm
-            text: (layoutRoot.activeLayout === "tiled") ? "" : "🔲"
+            text: (layoutRoot.activeLayout === "tiled") ? "" : ""
             color: (layoutRoot.activeLayout === "tiled") ? "#a6e3a1" : "#b4befe" // Pastel Green vs Lavender
         }
 
