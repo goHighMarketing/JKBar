@@ -162,71 +162,97 @@ Item {
             }
 
             Row {
-                id: rowItems
-                spacing: 8
-                height: parent.height
+    id: rowItems
+    spacing: 8
+    height: parent.height
 
-                Repeater {
-                    model: wallpaperModel
-                    delegate: Rectangle {
-                        id: thumbnailWrapper
-                        implicitWidth: 180
-                        implicitHeight: 130
-                        radius: 4
-                        color: "#181825"
-                        border.color: thumbnailMouseArea.containsMouse ? "#f5c2e7" : "transparent"
-                        border.width: 1.5
-                        clip: true
+    Repeater {
+        model: wallpaperModel
+        delegate: Rectangle {
+            id: thumbnailWrapper
+            implicitWidth: 180
+            implicitHeight: 130
+            radius: 4
+            color: "#181825"
+            border.color: thumbnailMouseArea.containsMouse ? "#f5c2e7" : "transparent"
+            border.width: 1.5
+            clip: true // CRITICAL: This crops the zooming image so it doesn't bleed out of the card edges!
 
-                        ColumnLayout {
-                            anchors.fill: parent
-                            spacing: 1
-                            anchors.margins: 1
+            ColumnLayout {
+                anchors.fill: parent
+                spacing: 1
+                anchors.margins: 1
 
-                            Image {
-                                Layout.fillWidth: true
-                                Layout.fillHeight: true
-                                source: selectorRoot.wallpaperDirUrl + model.fileName
-                                fillMode: Image.PreserveAspectCrop
-                                asynchronous: true
-                                cache: false
-                                sourceSize.width: 160
-                                sourceSize.height: 110
-                            }
+                // --- CROPPING LAYER FOR SMOOTH ZOOM ---
+                // We wrap the image in a clipped Item so it doesn't overlap the text when expanding
+                Item {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    clip: true 
 
-                            Text {
-                                text: model.name
-                                font.pixelSize: 9
-                                color: "#cdd6f4"
-                                Layout.alignment: Qt.AlignHCenter
-                                elide: Text.ElideRight
-                                Layout.maximumWidth: parent.width - 4
-                            }
-                        }
+                    Image {
+                        id: wallpaperImg
+                        anchors.fill: parent
+                        source: selectorRoot.wallpaperDirUrl + model.fileName
+                        fillMode: Image.PreserveAspectCrop
+                        asynchronous: true
+                        cache: false
+                        sourceSize.width: 180
+                        sourceSize.height: 130
 
-                        MouseArea {
-                            id: thumbnailMouseArea
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            z: 1
-                            acceptedButtons: Qt.LeftButton | Qt.RightButton
-                            onClicked: (mouse) => {
-                                if (mouse.button === Qt.LeftButton) {
-                                    setWallpaper(model.fileName);
-                                } else if (mouse.button === Qt.RightButton) {
-                                   // Right click = Safely route the image path up to our parent preview shield
-                                   let targetUrl = selectorRoot.wallpaperDirUrl + model.fileName;
+                        // Dynamic scale switch tied directly to the MouseArea's hover state
+                        scale: thumbnailMouseArea.containsMouse ? 1.12 : 1.0
+                        transformOrigin: Item.Center
 
-                                   // Looks up the component tree to trigger the custom overlay window
-                                   if (typeof root.showPreviewPopup === "function") {
-                                       root.showPreviewPopup(targetUrl);
-                                   }
-                               }
+                        // Animates the zoom back and forth smoothly over 180ms
+                        Behavior on scale {
+                            NumberAnimation {
+                                duration: 180
+                                easing.type: Easing.OutCubic
                             }
                         }
                     }
                 }
+
+                Text {
+                    text: model.name
+                    font.pixelSize: 9
+                    color: "#cdd6f4"
+                    Layout.alignment: Qt.AlignHCenter
+                    elide: Text.ElideRight
+                    Layout.maximumWidth: parent.width - 4
+                }
             }
+
+            MouseArea {
+                id: thumbnailMouseArea
+                anchors.fill: parent
+                hoverEnabled: true
+                z: 1
+                
+                // onEntered is no longer strictly required for the zoom calculation,
+                // as 'containsMouse' handles the state changes automatically!
+                onEntered: {
+                    // You can leave this empty or place hover sound effects / logging here
+                }
+
+                acceptedButtons: Qt.LeftButton | Qt.RightButton
+                onClicked: (mouse) => {
+                    if (mouse.button === Qt.LeftButton) {
+                        setWallpaper(model.fileName);
+                    } else if (mouse.button === Qt.RightButton) {
+                       let targetUrl = selectorRoot.wallpaperDirUrl + model.fileName;
+
+                       if (typeof root.showPreviewPopup === "function") {
+                           root.showPreviewPopup(targetUrl);
+                       }
+                   }
+                }
+            }
+        }
+    }
+}
+
 
             // ================= VISUAL HOVER EDGE INTERCEPTORS =================
             // FIX: Instead of anchoring to dynamic bounds, we use explicit top-level window
