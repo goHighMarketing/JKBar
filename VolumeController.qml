@@ -83,10 +83,16 @@ MouseArea {
         }
     }
 
-    onClicked: {
-        Quickshell.execDetached(["wpctl", "set-mute", "@DEFAULT_AUDIO_SINK@", "toggle"]);
-        audioQuery.running = true;
-    }
+    	acceptedButtons: Qt.LeftButton | Qt.RightButton
+        onClicked: (mouse) => {
+        	if (mouse.button === Qt.LeftButton) {
+        		Quickshell.execDetached(["wpctl", "set-mute", "@DEFAULT_AUDIO_SINK@", "toggle"]);
+        		audioQuery.running = true;
+    		}
+    		if (mouse.button === Qt.RightButton) {
+        		Quickshell.execDetached(["pavucontrol"]);
+    		}
+    	}
 
     // Dynamic State Refresh Clock Tracker:
     // Watches background multimedia key states (sxhkd commands) automatically
