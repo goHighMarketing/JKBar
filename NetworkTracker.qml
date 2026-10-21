@@ -23,7 +23,7 @@ RowLayout {
         command: ["cat", "/proc/net/dev"]
         running: false
 
-        stdout: StdioCollector {
+       stdout: StdioCollector {
             onStreamFinished: {
                 let lines = text.split("\n");
                 for (let i = 0; i < lines.length; i++) {
@@ -79,6 +79,18 @@ RowLayout {
     }
 
     // ================= DYNAMIC BAR INTERFACE TEXT BLOCK =================
+  MouseArea {
+	implicitWidth: nmText.implicitWidth + 110
+	implicitHeight: 24
+	hoverEnabled: true
+	acceptedButtons: Qt.LeftButton
+
+	// Left-click toggles mute
+	onClicked: {
+	    if (mouse.button === Qt.LeftButton) {
+		Quickshell.execDetached(["nm-connection-editor"]);
+	    } 
+	}
     RowLayout {
         spacing: 10
 
@@ -92,6 +104,7 @@ RowLayout {
                 color: "#a6e3a1" // Catppuccin Pastel Green
             }
             Text {
+		id: nmText
                 text: netRoot.downloadSpeedStr
                 font.family: "JetBrainsMono Nerd Font"
                 font.pixelSize: 12
@@ -117,5 +130,7 @@ RowLayout {
                 color: "#cdd6f4"
             }
         }
+	
     }
+  }
 }
