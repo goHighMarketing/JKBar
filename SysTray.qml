@@ -44,8 +44,8 @@ RowLayout {
 
                 delegate: Item {
                     id: trayItemDelegate
-                    implicitWidth: 16
-                    implicitHeight: 16
+                    implicitWidth: 24
+                    implicitHeight: 24
                     Layout.alignment: Qt.AlignVCenter
 
                     // FIX 3: Native Menu Anchor captures applet popup window requests cleanly
