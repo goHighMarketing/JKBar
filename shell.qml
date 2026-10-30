@@ -958,8 +958,8 @@ ShellRoot {
                                 hoverEnabled: true
                                 onClicked: {
                                     root.controlCenterOpen = false;
-                                    // Quickshell.execDetached(["systemctl", "reboot"]);
-                                    Quickshell.execDetached(["sudo", "reboot"]); // sysVinit
+                                    Quickshell.execDetached(["systemctl", "reboot"]);
+                                   // Quickshell.execDetached(["sudo", "reboot"]); // sysVinit
 				    // sudo visudo Then add: toadwick ALL=(ALL) NOPASSWD: /sbin/poweroff
                                 }
                             }
@@ -995,8 +995,8 @@ ShellRoot {
                                 hoverEnabled: true
                                 onClicked: {
                                     root.controlCenterOpen = false;
-                                    // Quickshell.execDetached(["systemctl", "poweroff"]);
-				    Quickshell.execDetached(["sudo", "poweroff"]) // sysVinit
+                                    Quickshell.execDetached(["systemctl", "poweroff"]);
+				    // Quickshell.execDetached(["sudo", "poweroff"]) // sysVinit
 				    // sudo visudo -> Then add: toadwick ALL=(ALL) NOPASSWD: /sbin/poweroff
 
                                 } 
